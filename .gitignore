@@ -1,6 +1,8 @@
 config.ini
 *.csv
 *.txt
+!requirements.txt
+*.srt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
