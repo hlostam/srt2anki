@@ -8,3 +8,4 @@ pandas==1.3.0
 py==1.10.0
 spacy==3.1.1
 srt==3.4.1
+genanki==0.11.0

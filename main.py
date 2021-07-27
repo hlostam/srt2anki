@@ -11,6 +11,7 @@ import configparser
 import cchardet as chardet
 import srt
 from ankipandas import Collection
+import genanki
 import unicodedata
 from pycountry import languages
 
@@ -175,6 +176,27 @@ def get_df_to_learn(df, min_frequency = 2):
     print(60*'-')
     return df_to_learn
 
+def generate_anki_id(string):
+    return abs(hash(string)) % (10 ** 10)
+
+def generate_deck(df, deck_name):
+    deck_name = deck_name.replace(" ","")
+    deck = genanki.Deck(
+        generate_anki_id(deck_name),
+        deck_name)
+
+    for row in df.to_dict('records'):
+        deck.add_note(genanki.Note(
+            model=genanki.BASIC_MODEL,
+            fields=[row['word'], 'TODO'],
+            tags = [deck_name]
+            )
+        )
+
+    file_path = deck_name + ".apkg"
+    deck.write_to_file(file_path)
+
+
 LANG_TRANSLATE_MODEL_PATH = './models/lid.176.ftz'
 known = ['nella','i','d','qui','po','dell','c','questi','tv']
 anki_csv_path = 'anki.lemma.csv'
@@ -254,6 +276,7 @@ def main(args):
     df_to_learn.to_csv(csv_path_unknwon, index = False)
     print(df_to_learn)
 
+    generate_deck(df_to_learn, srt_path_noext)
 
 if __name__ == '__main__':
     main(sys.argv)
