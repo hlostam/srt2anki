@@ -1,0 +1,3 @@
+[anki]
+card_deck=YOUR_DECK_NAME
+anki_path = /Users/PATH_TOANKI/collection.anki2
