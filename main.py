@@ -73,8 +73,17 @@ def strip_accents(data):
     data = unicodedata.normalize('NFKD', data).encode('ASCII', 'ignore').decode('utf-8')
     return data
 
-def lemmatise_spacy(data, language, file_path):
-    nlp = spacy.load("it_core_news_sm")
+def lemmatise_spacy(data, language_short, file_path):
+    models_dict =  {
+        'it': 'it_core_news_sm',
+        'es': 'es_core_news_sm',
+        'ja': 'ja_core_news_sm',
+        'pl': 'pl_core_news_sm',
+        'ge': 'de_core_news_sm',
+        'en': 'en_core_web_sm'
+    }
+    model_str = models_dict[language_short]
+    nlp = spacy.load(model_str)
 
     data = strip_accents(data)
     doc = nlp(data)
@@ -82,7 +91,7 @@ def lemmatise_spacy(data, language, file_path):
     with open(file_path[:-4]+'.lemma.spacy.txt', 'w') as f:
         f.write("%s,%s,%s,%s,%s,%s\n" % ("token", "pos", "dep", "lemma", "ent_iob", "ent_type") )
         for token in doc:
-            remove_types = ['PUNCT', 'NUM','X']
+            remove_types = ['PUNCT', 'NUM','X','DET','SPACE']
             remove_det = ['det']
             lemma = strip_accents(token.lemma_)
             if token.pos_ not in remove_types and token.dep_ not in remove_det:
@@ -94,8 +103,8 @@ def lemmatise_spacy(data, language, file_path):
                                        token.ent_iob_, token.ent_type_) )
     return lemmatised
 
-def remove_stop_words(word_list, language):
-    raise Exception("Not Implemented")
+# def remove_stop_words(word_list, language):
+#     raise Exception("Not Implemented")
     # stop_words = set(['a']
     #     # stopwords.words(language)
     #     )  # load stopwords
@@ -132,17 +141,15 @@ def cleanhtml(raw_html):
 # Analysis and statistics
 ######################################## 
 
-def get_frequent_words(word_list, language, remove_stopwords=False, min_count=2):
-    if remove_stopwords is True:
-        word_list = remove_stop_words(word_list, language=language)
-    new_data = Counter(word_list)
-    for key, count in dropwhile(lambda key_count: key_count[1] >= min_count, new_data.most_common()):
-        del new_data[key]
-    df = pd.DataFrame.from_dict(new_data.most_common())
-    
-    df.columns = ['word', 'occurrences']
-    
-    return df
+# def get_frequent_words(word_list, language, min_count=2):
+#     # if remove_stopwords is True:
+#         # word_list = remove_stop_words(word_list, language=language)
+#     new_data = Counter(word_list)
+#     for key, count in dropwhile(lambda key_count: key_count[1] >= min_count, new_data.most_common()):
+#         del new_data[key]
+#     df = pd.DataFrame.from_dict(new_data.most_common())
+#     df.columns = ['word', 'occurrences']    
+#     return df
 
 def get_df_to_learn(df, min_frequency = 2):
     total_len = len(df)
@@ -174,6 +181,9 @@ def get_df_to_learn(df, min_frequency = 2):
     print("% of movie if known highfreq: {:.0%}".format(high_freq_sum / movie_word_count) )
 
     print(60*'-')
+    print(df_unknown.groupby('occurrences').size())
+    print(60*'-')
+    
     return df_to_learn
 
 def generate_anki_id(string):
@@ -187,7 +197,7 @@ def generate_deck(df, deck_name):
 
     for row in df.to_dict('records'):
         deck.add_note(genanki.Note(
-            model=genanki.BASIC_MODEL,
+            model=genanki.BASIC_AND_REVERSED_CARD_MODEL,
             fields=[row['word'], 'TODO'],
             tags = [deck_name]
             )
@@ -196,7 +206,15 @@ def generate_deck(df, deck_name):
     file_path = deck_name + ".apkg"
     deck.write_to_file(file_path)
 
-
+def get_combined_df(lemmatised, anki_df, manual_known):    
+    # Combine to get the word counts
+    df = lemmatised.groupby(['word','pos']).size().rename('occurrences').reset_index()
+    df = (df
+        .merge(anki_df, on='word',how='left')
+        .merge(manual_known, on='word', how='left')
+        .fillna(0)
+    )
+    
 LANG_TRANSLATE_MODEL_PATH = './models/lid.176.ftz'
 known = ['nella','i','d','qui','po','dell','c','questi','tv']
 anki_csv_path = 'anki.lemma.csv'
@@ -261,13 +279,8 @@ def main(args):
         lemmatised = lemmatise_spacy(data, language_short, srt_path)
         lemmatised.to_csv(lemmatised_csv_path, index=False)
 
-    # Combine to get the word counts
-    df = lemmatised.groupby(['word','pos']).size().rename('occurrences').reset_index()
-    df = (df
-        .merge(anki_df, on='word',how='left')
-        .merge(manual_known, on='word', how='left')
-        .fillna(0)
-    )
+    df = get_combined_df(lemmatised, anki_df, manual_known)
+
     csv_path_all = srt_path_noext + '.csv'
     df.to_csv(csv_path_all, index = False)
 

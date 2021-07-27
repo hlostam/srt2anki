@@ -20,9 +20,9 @@ Create list of words to learn for a movie based on your anki knowledge.
 - chardet - detect the file encoding of the subtitles
 - fasttext - detection of the subtitles language
 - pycountry - linking countries and their acronyms for language detections
-- srt: parsing the subtitles https://pypi.org/project/srt/
-- Spacy - lemmatisation https://spacy.io/models/it
-
+- [srt](https://pypi.org/project/srt/) - parsing the subtitles 
+- [Spacy](https://spacy.io/models/it) - lemmatisation 
+- [genanki](https://github.com/kerrickstaley/genanki) - export Anki pacakge 
 
 ## (Not Needed) How to export Anki file
 1. Open Anki Desktop
