@@ -17,38 +17,15 @@ clean:
 lint:
 	flake8 src 
 
-# lint: venv
-# 	${PYTHON} -m pylint main.py
-
-## Clean output of jupyter notebooks
-clean_nb_%:
-	jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace notebooks/$*.ipynb
-
-## Clean output of all jupyter notebooks
-cleanall_nb: $(patsubst notebooks/%.ipynb,clean_nb_%,$(wildcard notebooks/*.ipynb))
-
 ## Creates a virtual environment
 venv:
 	python3 -m venv $(VENV_NAME)
 
-# venv2: $(VENV_NAME)/bin/activate
-# $(VENV_NAME)/bin/activate: 
-# 	test -d $(VENV_NAME) || python3 -m venv $(VENV_NAME)
-# 	touch $(VENV_NAME)/bin/activate
-# 	. ${VENV_NAME}/activate && exec bash
-
 ## Freezes the environment
-pipfreeze: isvirtualenv
-	pip3 freeze > requirements.txt
-
 pipinstall: isvirtualenv
 	pip3 install --upgrade pip
 	pip3 install -r requirements.txt
 	pip3 install --editable .
-
-data/raw:
-	@echo "Fetching raw data..."
-	mkdir -p $@
 
 run: venv pipinstall
 

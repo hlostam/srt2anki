@@ -3,6 +3,8 @@ config.ini
 *.txt
 !requirements.txt
 *.srt
+*.apkg
+.DS_STORE
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
