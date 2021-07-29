@@ -1,16 +1,16 @@
+import re
+from pathlib import Path
+import zipfile
+import tempfile
+
 import cchardet as chardet
 from ankipandas import Collection
 import genanki
 import pandas as pd
-import re
-# import unicodedata
-from pathlib import Path
 from ankisync2.apkg import Apkg
 from ankisync2.anki21 import db
-from srt2anki import analysis
 
-import tempfile
-import zipfile
+from srt2anki import analysis
 
 ############################################################
 # Anki functions

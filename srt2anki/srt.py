@@ -1,7 +1,8 @@
 import re
+from pathlib import Path
+
 import cchardet as chardet
 import pandas as pd
-from pathlib import Path
 import fasttext
 import srt
 import py.io

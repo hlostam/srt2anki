@@ -1,14 +1,13 @@
 import os, re, sys
 import itertools
 import logging
+from pathlib import Path
 from itertools import dropwhile
 from collections import Counter
-
-import pandas as pd
 import argparse
 import configparser
-from pathlib import Path
 
+import pandas as pd
 from srt2anki import anki, analysis, srt
 
 ############################################

@@ -1,18 +1,13 @@
 import sys
 import os
-sys.path.append(os.getcwd() + '/..')
+import streamlit as st
+import io
+import base64
+from pathlib import Path
 
 import pandas as pd
 import numpy as np
-import sys
-import logging
-import logging.config
-import os
-import streamlit as st
-import io
 import cchardet as chardet
-from pathlib import Path
-import base64
 
 from srt2anki import anki, analysis, srt
 

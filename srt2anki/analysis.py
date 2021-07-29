@@ -1,10 +1,11 @@
 import unicodedata
+import re
 
 import pandas as pd
 import spacy
-import re
 
 known = ['nella','i','d','qui','po','dell','c','questi','tv',"anch'","i'"]
+
 def get_manual_known_df():
         manual_known = pd.DataFrame({'word':known})
         manual_known['is_known'] = 1
