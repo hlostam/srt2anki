@@ -10,7 +10,7 @@ import pandas as pd
 from ankisync2.apkg import Apkg
 from ankisync2.anki21 import db
 
-from srt2anki import analysis
+from srt2anki import analysis, srt
 
 ############################################################
 # Anki functions
@@ -20,7 +20,7 @@ def get_anki_df(anki_path, language_short, card_deck=None, anki=None):
         print("Anki loaded")
     elif(Path(anki_path).suffix == '.apkg'):
         print("Loading APKG:")
-        anki = load_apkg(anki_path)
+        anki = load_apkg(anki_path, language_short)
     else:
         print("Loading Anki collection")
         anki = parse_anki(load_anki(anki_path, card_deck))
@@ -69,13 +69,13 @@ def rm_tree(pth: Path):
 def get_proper_anki_collection(archive):
     for name in ['anki21','anki20','anki2']:
         try:
-            d = archive.read('collection.anki21')
+            d = archive.read('collection.{}'.format(name))
             return d
         except Exception:
             pass
     raise Exception("Anki collection not found")
 
-def load_apkg(file_path):
+def load_apkg(file_path, language_short):
     print("load_apkg")
     archive = zipfile.ZipFile(file_path,'r')
     d = get_proper_anki_collection(archive)
@@ -83,47 +83,27 @@ def load_apkg(file_path):
         f.write(d)
         tmp_file_name = f.name
     db.database.init(tmp_file_name)
-    words = [ c.flds[0] for c in db.Notes.select()]
-    words_clean = [cleanhtml(word.lower()) for word in words]
+    
+    words_front = [ c.flds[0] for c in db.Notes.select()]
+    words_back = [ c.flds[1] for c in db.Notes.select()]
     Path(tmp_file_name).unlink()
     
-    return words_clean
-
-# def load_apkg(file_path):
-#     print("load_apkg")
+    words_clean_front = [cleanhtml(word.lower()) for word in words_front]
+    lang_front = srt.detect_text_language(" ".join(words_clean_front))
     
-#     path = Path(file_path)
-#     if not path.exists():
-#         raise Exception("The file does not exists:{}".format(file_path))
+    words_clean_back = [cleanhtml(word.lower()) for word in words_back]
+    lang_back = srt.detect_text_language(" ".join(words_clean_back))
+
+    if lang_front == language_short:
+        # print("Front",lang_front)
+        return words_clean_front
+    elif lang_back == language_short:
+        # print("Back",lang_back)
+        return words_clean_back
+    else:
+        print("Language could not be detected - returning front by default")
+        return words_clean_front
     
-#     # This exports the zip to the directory 
-#     apkg = Apkg(path)
-#     iter_apkg = iter(apkg)
-    
-#     name = path.stem
-#     apkg_dir = Path(name)
-#     if not apkg_dir.is_dir():
-#         raise Exception("The {} is not a directory".format(apkg_dir))
-#     anki20 = "./"+name+"/collection.anki20"
-#     anki21 = "./"+name+"/collection.anki21"
-#     anki2 = "./"+name+"/collection.anki2"
-#     if Path(anki21).exists():
-#         file = anki21
-#     elif Path(anki20).exists():
-#         file = anki20
-#     else:
-#         file = anki2
-#     db.database.init(file)
-
-#     words = [ c.flds[0] for c in db.Notes.select()]
-#     words_clean = [cleanhtml(word.lower()) for word in words]
-    
-#     apkg.close()
-#     rm_tree(apkg_dir)
-
-#     return words_clean
-
-
 # Export
 def generate_anki_id(string):
     return abs(hash(string)) % (10 ** 10)

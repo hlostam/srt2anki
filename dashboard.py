@@ -52,7 +52,7 @@ def main():
             srt_df = analysis.lemmatise_spacy(data, language_short)
 
         with st.spinner('Processing Anki file'):
-            anki_list = anki.load_apkg(anki_file_buf)
+            anki_list = anki.load_apkg(anki_file_buf, language_short)
             anki_df = anki.get_anki_df(None, language_short, anki=anki_list)
             
         with st.spinner('Combining files'):
