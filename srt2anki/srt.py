@@ -6,10 +6,11 @@ import pandas as pd
 import fasttext
 import srt
 import py.io
+import urllib.request
 
 from srt2anki import analysis, anki
 
-LANG_TRANSLATE_MODEL_PATH = '/Users/mh25785/code/srt2anki/models/lid.176.ftz'
+LANG_TRANSLATE_MODEL_PATH = './models/lid.176.ftz'
 
 ############################################################
 # Subtitle parse
@@ -45,6 +46,9 @@ def detect_file_encoding(file_path):
     return result['encoding']
 
 def get_fasttext_model():
+    if not Path(LANG_TRANSLATE_MODEL_PATH).exists():
+        url = 'https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin'
+        urllib.request.urlretrieve(url, LANG_TRANSLATE_MODEL_PATH)
     # capture = py.io.StdCaptureFD(out=False, in_=False)
     model = fasttext.load_model(LANG_TRANSLATE_MODEL_PATH)
     # out, err = capture.reset()
