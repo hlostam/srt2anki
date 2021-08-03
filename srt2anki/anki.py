@@ -75,6 +75,35 @@ def get_proper_anki_collection(archive):
             pass
     raise Exception("Anki collection not found")
 
+def get_card_text(card, side_index:int) -> str:
+        '''[summary]
+
+        Parameters
+        ----------
+        fld : [type]
+            [description]
+        side_index : [int]
+            0 = front, 1 = back
+
+        Returns
+        -------
+        [str]
+            [description]
+        '''
+        try:
+            return card.flds[side_index]
+        except IndexError:
+            side = 'front' if side_index == 0 else 'back'
+            print("The {} side of the card {} is missing".format(side, card.flds))
+            return None
+
+def get_words_from_db(db, side):
+    side_index = 0 if side == 'front' else 1
+    words = [ get_card_text(c, side_index) for c in db.Notes.select()]
+    words_filter_none = list(filter(None, words))
+    words_clean =   [cleanhtml(word.lower()) for word in words_filter_none]
+    return words_clean
+
 def load_apkg(file_path, language_short):
     print("load_apkg")
     archive = zipfile.ZipFile(file_path,'r')
@@ -83,22 +112,19 @@ def load_apkg(file_path, language_short):
         f.write(d)
         tmp_file_name = f.name
     db.database.init(tmp_file_name)
-    
-    words_front = [ c.flds[0] for c in db.Notes.select()]
-    words_back = [ c.flds[1] for c in db.Notes.select()]
-    Path(tmp_file_name).unlink()
-    
-    words_clean_front = [cleanhtml(word.lower()) for word in words_front]
-    lang_front = srt.detect_text_language(" ".join(words_clean_front))
-    
-    words_clean_back = [cleanhtml(word.lower()) for word in words_back]
+            
+    words_clean_front = get_words_from_db(db, "front")
+    lang_front = srt.detect_text_language(" ".join(words_clean_front))    
+    words_clean_back = get_words_from_db(db, "back")
     lang_back = srt.detect_text_language(" ".join(words_clean_back))
+    
+    Path(tmp_file_name).unlink()
 
     if lang_front == language_short:
-        # print("Front",lang_front)
+        print("Front card language detected: ", language_short)
         return words_clean_front
     elif lang_back == language_short:
-        # print("Back",lang_back)
+        print("Back card language detected: ", language_short)
         return words_clean_back
     else:
         print("Language could not be detected - returning front by default")

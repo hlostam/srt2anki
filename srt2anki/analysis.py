@@ -59,12 +59,12 @@ def remove_known(word_list, words_remove):
     return word_list
 
 # Statistics / final DF preprocessing
-def get_combined_df(lemmatised, anki_df, manual_known):    
+def get_combined_df(df_srt, df_anki, df_manual_known):    
     # Combine to get the word counts
-    df = lemmatised.groupby(['word','pos']).size().rename('occurrences').reset_index()
+    df = df_srt.groupby(['word','pos']).size().rename('occurrences').reset_index()
     df = (df
-        .merge(anki_df, on='word',how='left')
-        .merge(manual_known, on='word', how='left')
+        .merge(df_anki, on='word',how='left')
+        .merge(df_manual_known, on='word', how='left')
         .fillna(0)
     )
     return df
