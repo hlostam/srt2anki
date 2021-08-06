@@ -38,6 +38,15 @@ def main():
     st.sidebar.title("srt2anki")
     anki_file_buf = st.sidebar.file_uploader("Upload apkg", type=["apkg"], key='apkg')
     srt_file_buf = st.sidebar.file_uploader("Upload srt", type=["srt"], key='srt')
+    title_left, space, title_right = st.beta_columns(
+    (3.5, .2, 1,))
+    
+    title_left.header("Watching a foreign language movie with Anki and Subtitles analysis")
+    title_right.subheader(
+    'Created by [Martin Hlosta](https://www.linkedin.com/in/mhlosta/)')
+    
+    st.markdown("""Upload both the subtitles and Anki file in the left menu, the analysis will start automatically after the upload. You can also read my [Medium article about this project](https://medium.com/@hlostak/watching-a-foreign-language-movie-with-anki-and-subtitles-analysis-ca1a538496cb). I would be very grateful for any feedback, either under the Medium article or on [Twitter](https://twitter.com/mhlosta/status/1422836948956323843).""")
+
     if anki_file_buf is not None and srt_file_buf is not None:
         
         with st.spinner('Processing SRT file'):
