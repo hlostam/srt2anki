@@ -3,7 +3,9 @@ from pathlib import Path
 import zipfile
 import tempfile
 
-import cchardet as chardet
+# import cchardet as chardet
+# from charset_normalizer import detect
+
 from ankipandas import Collection
 import genanki
 import pandas as pd

@@ -1,11 +1,13 @@
 import re
 from pathlib import Path
 
-import cchardet as chardet
+# import cchardet as chardet
+from charset_normalizer import detect
+
 import pandas as pd
 import fasttext
 import srt
-import py.io
+# import py.io
 import urllib.request
 
 from srt2anki import analysis, anki
@@ -42,7 +44,7 @@ def get_srt_df_cached(srt_path, srt_encoding, language_short=None):
 def detect_file_encoding(file_path):
     with open(file_path, "rb") as f:
         msg = f.read()
-        result = chardet.detect(msg)
+        result = detect(msg)
     return result['encoding']
 
 def get_fasttext_model():

@@ -7,14 +7,15 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
-import cchardet as chardet
+# import cchardet as chardet
+from charset_normalizer import detect
 
 from srt2anki import anki, analysis, srt
 
 def read_txt_file_upload(file, encoding=None):
     msg = file.read()
     if encoding is None:
-        encoding = chardet.detect(msg)['encoding']
+        encoding = detect(msg)['encoding']
     text = str(msg, encoding)
     return text
 
