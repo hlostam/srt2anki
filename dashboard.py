@@ -61,7 +61,10 @@ def main():
                 data = srt.srt2text(text)
                 language_short = srt.detect_text_language(data)
                 # st.write("Language Short", language_short)
-                srt_df = analysis.lemmatise_spacy(data, language_short)
+                try:
+                    srt_df = analysis.lemmatise_spacy(data, language_short)
+                except Exception as e:
+                    st.error(f"This language: {language_short} is not supported - the web version supports only IT, ES, DE.")
                 return srt_df, language_short
             srt_df, language_short = cache_srt(text)
 
