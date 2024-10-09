@@ -3,7 +3,7 @@ numpy==1.26.4
 ankipandas>=0.3.10
 ankisync2==0.3.2
 charset-normalizer>=3.3.2
-fasttext==0.9.2
+# fasttext==0.9.2
 it-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.1.0/it_core_news_sm-3.1.0-py3-none-any.whl
 es-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.1.0/es_core_news_sm-3.1.0-py3-none-any.whl
 de-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.1.0/de_core_news_sm-3.1.0-py3-none-any.whl

@@ -5,7 +5,7 @@ from pathlib import Path
 from charset_normalizer import detect
 
 import pandas as pd
-import fasttext
+# import fasttext
 import srt
 # import py.io
 import urllib.request
@@ -48,21 +48,21 @@ def detect_file_encoding(file_path):
         result = detect(msg)
     return result['encoding']
 
-def get_fasttext_model():
-    if not Path(LANG_TRANSLATE_MODEL_PATH).exists():
-        url = 'https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin'
-        urllib.request.urlretrieve(url, LANG_TRANSLATE_MODEL_PATH)
-    # capture = py.io.StdCaptureFD(out=False, in_=False)
-    model = fasttext.load_model(LANG_TRANSLATE_MODEL_PATH)
-    # out, err = capture.reset()
-    return model
+# def get_fasttext_model():
+#     if not Path(LANG_TRANSLATE_MODEL_PATH).exists():
+#         url = 'https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin'
+#         urllib.request.urlretrieve(url, LANG_TRANSLATE_MODEL_PATH)
+#     # capture = py.io.StdCaptureFD(out=False, in_=False)
+#     model = fasttext.load_model(LANG_TRANSLATE_MODEL_PATH)
+#     # out, err = capture.reset()
+#     return model
 
-def detect_text_language_old(text):
-    text = re.sub('\W+',' ', text).replace('\n', '')
-    model = get_fasttext_model()
-    guess = model.predict(text, k=1)
-    lang = guess[0][0].replace('__label__','')
-    return lang
+# def detect_text_language_old(text):
+#     text = re.sub('\W+',' ', text).replace('\n', '')
+#     model = get_fasttext_model()
+#     guess = model.predict(text, k=1)
+#     lang = guess[0][0].replace('__label__','')
+#     return lang
 
 
 def detect_text_language(text):

@@ -56,7 +56,7 @@ def main():
 
             text = read_txt_file_upload(srt_file_buf)
             
-            @st.cache_data(suppress_st_warning=True)
+            @st.cache_data()
             def cache_srt(text):
                 data = srt.srt2text(text)
                 language_short = srt.detect_text_language(data)
@@ -67,7 +67,7 @@ def main():
 
         with st.spinner('Processing Anki file'):
             anki_list = anki.load_apkg(anki_file_buf, language_short)
-            @st.cache_data(suppress_st_warning=True)
+            @st.cache_data()
             def cache_anki(anki_list, language_short):
                 anki_df = anki.get_anki_df(None, language_short, anki=anki_list)
                 return anki_df
