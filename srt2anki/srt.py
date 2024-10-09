@@ -9,6 +9,7 @@ import fasttext
 import srt
 # import py.io
 import urllib.request
+import langid
 
 from srt2anki import analysis, anki
 
@@ -56,11 +57,17 @@ def get_fasttext_model():
     # out, err = capture.reset()
     return model
 
-def detect_text_language(text):
+def detect_text_language_old(text):
     text = re.sub('\W+',' ', text).replace('\n', '')
     model = get_fasttext_model()
     guess = model.predict(text, k=1)
     lang = guess[0][0].replace('__label__','')
+    return lang
+
+
+def detect_text_language(text):
+    text = re.sub('\W+', ' ', text).replace('\n', '')
+    lang, _ = langid.classify(text)
     return lang
 
 def detect_file_language(file_path, encoding=None):

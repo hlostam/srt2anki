@@ -28,8 +28,10 @@ def lemmatise_spacy(data, language_short):
         'en': 'en_core_web_sm'
     }
     model_str = models_dict[language_short]
-    nlp = spacy.load(model_str)
-
+    try:
+        nlp = spacy.load(model_str)
+    except Exception as e:
+        raise Exception(f"This language: {language_short} is not supported - the web version supports only IT, ES, DE.")
     data = strip_accents(data)
     doc = nlp(data)
     lemmatised = pd.DataFrame()

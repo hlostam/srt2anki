@@ -35,11 +35,11 @@ def get_table_download_link_csv(df, name, file_label='File'):
 
 
 def main():
-    st.set_option("deprecation.showPyplotGlobalUse", False)
+    # st.set_option("deprecation.showPyplotGlobalUse", False)
     st.sidebar.title("srt2anki")
     anki_file_buf = st.sidebar.file_uploader("Upload apkg", type=["apkg"], key='apkg')
     srt_file_buf = st.sidebar.file_uploader("Upload srt", type=["srt"], key='srt')
-    title_left, space, title_right = st.beta_columns(
+    title_left, space, title_right = st.columns(
     (3.5, .2, 1,))
     
     title_left.header("Watching a foreign language movie with Anki and Subtitles analysis")
@@ -56,7 +56,7 @@ def main():
 
             text = read_txt_file_upload(srt_file_buf)
             
-            @st.cache(suppress_st_warning=True)
+            @st.cache_data(suppress_st_warning=True)
             def cache_srt(text):
                 data = srt.srt2text(text)
                 language_short = srt.detect_text_language(data)
@@ -67,7 +67,7 @@ def main():
 
         with st.spinner('Processing Anki file'):
             anki_list = anki.load_apkg(anki_file_buf, language_short)
-            @st.cache(suppress_st_warning=True)
+            @st.cache_data(suppress_st_warning=True)
             def cache_anki(anki_list, language_short):
                 anki_df = anki.get_anki_df(None, language_short, anki=anki_list)
                 return anki_df
